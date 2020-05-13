@@ -38,7 +38,6 @@ func TestSpinLock(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 
-
 	l := &lock1{}
 	go func() {
 		l.sl.Lock()

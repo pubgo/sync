@@ -52,8 +52,9 @@ func (rw *RWMutex) RLock() {
 func (rw *RWMutex) RUnlock() {
 	if r := atomic.AddInt32(&rw.readerCount, -1); r < 0 {
 		if r+1 == 0 || r+1 == -rwmutexMaxReaders {
-			log.Fatal("sync: RUnlock of unlocked RWMutex")
+			log.Fatalln("sync: RUnlock of unlocked RWMutex")
 		}
+
 		// A writer is pending.
 		atomic.AddInt32(&rw.readerWait, -1)
 		//if atomic.AddInt32(&rw.readerWait, -1) == 0 {
@@ -93,11 +94,7 @@ func (rw *RWMutex) Unlock() {
 	// Announce to readers there is no active writer.
 	r := atomic.AddInt32(&rw.readerCount, rwmutexMaxReaders)
 	if r >= rwmutexMaxReaders {
-		log.Fatal("sync: Unlock of unlocked RWMutex")
-	}
-
-	// Unblock blocked readers, if any.
-	for i := 0; i < int(r); i++ {
+		log.Fatalln("sync: Unlock of unlocked RWMutex")
 	}
 
 	// Allow other writers to proceed.
